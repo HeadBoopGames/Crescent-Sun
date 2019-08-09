@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
+[ext_resource path="res://Assets/CharacterAnimAtlas.tres" type="Texture" id=2]
+[ext_resource path="res://Scenes/Weapons/Rifle.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 4.95071, 6.04054 )
+
+[sub_resource type="RectangleShape2D" id=2]
+
+[node name="Player" type="KinematicBody2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 1 )
+shape = SubResource( 1 )
+
+[node name="Character" type="Sprite" parent="."]
+position = Vector2( 0, -5 )
+z_index = 50
+texture = ExtResource( 2 )
+vframes = 4
+hframes = 7
+frame = 7
+
+[node name="RotationPoint" type="Node2D" parent="."]
+
+[node name="Hand" type="Sprite" parent="RotationPoint"]
+
+[node name="BulletSpawnLocation" type="Node2D" parent="RotationPoint"]
+position = Vector2( 16.1925, -0.51405 )
+
+[node name="WeaponSlot" type="Node2D" parent="RotationPoint"]
+z_index = 51
+
+[node name="Rifle" parent="RotationPoint/WeaponSlot" instance=ExtResource( 3 )]
+pickedup = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 0, -5 )
+current = true
+zoom = Vector2( 0.5, 0.5 )
+smoothing_enabled = true
+drag_margin_left = 0.0
+drag_margin_top = 0.0
+drag_margin_right = 0.0
+drag_margin_bottom = 0.0
+script = ExtResource( 4 )
+
+[node name="ItemDetection" type="Area2D" parent="."]
+collision_layer = 512
+collision_mask = 512
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ItemDetection"]
+shape = SubResource( 2 )
+
+[connection signal="area_entered" from="ItemDetection" to="." method="_on_ItemDetection_area_entered"]
+[connection signal="area_exited" from="ItemDetection" to="." method="_on_ItemDetection_area_exited"]
