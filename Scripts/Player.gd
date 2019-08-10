@@ -98,22 +98,27 @@ func controls_loop():
 	var PICKUP_ITEM = Input.is_action_just_pressed("pickup")
 	
 	if DROP_ITEM:
-		var target = get_node("/root/Main/WeaponContainer")
-		var source = get_node("RotationPoint/WeaponSlot").get_child(0)
-		var drop_position = self.position
-		get_node("RotationPoint/WeaponSlot").remove_child(source)
-		target.add_child(source)
-		source.set_owner(target)
-		source.position = drop_position
+		if get_node("RotationPoint/WeaponSlot").get_child(0) != null and not canPickUp:
+			var target = get_node("/root/Main/WeaponContainer")
+			var source = get_node("RotationPoint/WeaponSlot").get_child(0)
+			var drop_position = self.position
+			get_node("RotationPoint/WeaponSlot").remove_child(source)
+			target.add_child(source)
+			source.set_owner(target)
+			source.position = drop_position
+			source.set_name(source.item_name)
+			canPickUp = true
 		
 	if PICKUP_ITEM:
-		if itemToPickUp != null:
+		if itemToPickUp != null and canPickUp:
 			var target = get_node("RotationPoint/WeaponSlot")
 			var source = itemToPickUp
 			itemToPickUp.get_parent().remove_child(itemToPickUp)
 			target.add_child(source)
 			source.set_owner(target)
 			source.position = Vector2(0,0)
+			source.set_name(source.item_name)
+			canPickUp = false
 
 	movedir.x = -int(LEFT) + int(RIGHT)
 	movedir.y = -int(UP) + int(DOWN)
@@ -123,11 +128,11 @@ func controls_loop():
 
 	if LEFT or RIGHT or UP or DOWN:
 		anim_walk = "Move"
-		if LEFT:
-			character.flip_h = true
-
-		if RIGHT:
-			character.flip_h = false
+#		if LEFT:
+#			character.flip_h = true
+#
+#		if RIGHT:
+#			character.flip_h = false
 
 	else:
 		anim_walk = "Idle"

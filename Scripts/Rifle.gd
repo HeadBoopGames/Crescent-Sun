@@ -20,11 +20,10 @@ func _ready():
 
 func Shoot():
 	if can_shoot:
-		print("Pew pew!")
-		var shot = load("res://Scenes/Bullet_Rifle.tscn").instance()
+		var shot = load("res://Scenes/Weapons/Bullet_Rifle.tscn").instance()
 		shot.position = $BulletSpawnPoint.get_global_transform().get_origin()
 		shot.rot = character.RotationPoint.rotation
-		get_node("/root/").add_child(shot)
+		get_node("/root/Main/BulletsContainer").add_child(shot)
 		can_shoot = false
 		attack_timer.start()
 

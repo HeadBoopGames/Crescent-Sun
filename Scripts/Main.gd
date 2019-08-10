@@ -1,5 +1,8 @@
 extends Node2D
 
+var title = "Crescent Sun"
+var version = "V 0.0.1"
+
 var Room = preload("res://Scenes/Room.tscn")
 var Player = preload("res://Scenes/Player.tscn")
 var placeholder = preload("res://Scenes/Placeholder.tscn")
@@ -8,7 +11,7 @@ var rifle = preload("res://Scenes/Weapons/Rifle.tscn")
 onready var Map = $TileMap
 
 var tile_size = 32
-var num_rooms = 50
+var num_rooms = 25
 var min_size = 4
 var max_size = 10
 var hspread = 200
@@ -26,7 +29,7 @@ func _ready():
 	make_rooms()
 	
 	# Wait for rooms
-	yield(get_tree().create_timer(2), 'timeout')
+	yield(get_tree().create_timer(2.1), 'timeout')
 	
 	make_map()
 	
@@ -42,7 +45,7 @@ func _ready():
 		
 
 	# Wait for map
-	yield(get_tree().create_timer(0.2), 'timeout')
+	yield(get_tree().create_timer(0.3), 'timeout')
 	
 	populate_map()
 
@@ -55,6 +58,7 @@ func make_rooms():
 		var h = min_size + randi() % (max_size - min_size)
 		r.make_room(pos, Vector2(w, h) * tile_size)
 		$Rooms.add_child(r)
+		yield(get_tree().create_timer(0.01), 'timeout')
 	
 	# Wait for movement to stop
 	yield(get_tree().create_timer(1.1), 'timeout')
@@ -91,7 +95,9 @@ func _draw():
 
 
 func _process(delta):
+#	if not play_mode:
 	update()
+	OS.set_window_title(title + " " + version + " | FPS: " + str(Engine.get_frames_per_second()))
 
 
 func _input(event):

@@ -20,4 +20,5 @@ func set_area_collision():
 	var a = RectangleShape2D.new()
 	a.extents = area_size
 	$Area2D/CollisionShape2D.shape = a
+	$Area2D/CollisionShape2D.disabled = true
 	$CollisionShape2D.disabled = true
