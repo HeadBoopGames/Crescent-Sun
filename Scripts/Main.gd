@@ -11,11 +11,11 @@ var rifle = preload("res://Scenes/Weapons/Rifle.tscn")
 onready var Map = $TileMap
 
 var tile_size = 32
-var num_rooms = 25
+var num_rooms = 20
 var min_size = 4
-var max_size = 10
-var hspread = 200
-var cull = 0.35
+var max_size = 8
+var hspread = 500
+var cull = 0.15
 
 var path # AStar pathfinding object
 var start_room = null
@@ -167,8 +167,8 @@ func make_map():
 		full_rect = full_rect.merge(r)
 	var topleft = Map.world_to_map(full_rect.position)
 	var bottomright = Map.world_to_map(full_rect.end)
-	for x in range(topleft.x - 32, bottomright.x + 32):
-		for y in range(topleft.y - 32, bottomright.y + 32):
+	for x in range(topleft.x - 8, bottomright.x + 8):
+		for y in range(topleft.y - 8, bottomright.y + 8):
 			Map.set_cell(x, y, 0) # Set all cells to Wall
 	
 	# Carve rooms
@@ -177,9 +177,15 @@ func make_map():
 		var s = (room.size / tile_size).floor()
 		var pos = Map.world_to_map(room.position)
 		var ul = (room.position / tile_size).floor() - s
-		for x in range(0, s.x * 2): # Add this if you want to have separate rooms range(2, s.x * 2 - 1):
-			for y in range(0, s.y * 2): # Add this if you want to have separate rooms range(2, s.y * 2 - 1):
-				Map.set_cell(ul.x + x, ul.y + y, 1) # Set rooms to Floor
+		for x in range(0, s.x * 2): #range(0, s.x * 2): # Add this if you want to have separate rooms: range(2, s.x * 2 - 1):
+			for y in range(0, s.y * 2): # Add this if you want to have separate rooms: range(2, s.y * 2 - 1):
+				var floor_tile = 0
+				var tile_ID = range(1,101)[randi()%range(1,101).size()]
+				if tile_ID <= 21:
+					floor_tile = range(2,14)[randi()%range(2,14).size()]
+				else:
+					floor_tile = 1
+				Map.set_cell(ul.x + x, ul.y + y, floor_tile) # Set rooms to Floor
 		
 		var p = path.get_closest_point(Vector3(room.position.x, room.position.y, 0))
 		for conn in path.get_point_connections(p):
@@ -197,7 +203,7 @@ func carve_path(pos1, pos2):
 	if x_diff == 0: x_diff = pow(-1.0, randi() % 2)
 	if y_diff == 0: y_diff = pow(-1.0, randi() % 2)
 	
-	# Choose either x7y or y/x
+	# Choose either x/y or y/x
 	var x_y = pos1
 	var y_x = pos2
 	if (randi() % 2) > 0:

@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
-[ext_resource path="res://Assets/CharacterAnimAtlas.tres" type="Texture" id=2]
-[ext_resource path="res://Scenes/Weapons/Rifle.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=4]
+[ext_resource path="res://Assets/2DLighting.png" type="Texture" id=2]
+[ext_resource path="res://Assets/CharacterAnimAtlas.tres" type="Texture" id=3]
+[ext_resource path="res://Assets/Black.png" type="Texture" id=4]
+[ext_resource path="res://Scenes/Weapons/Rifle.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=6]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 4.95071, 6.04054 )
@@ -17,18 +19,35 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+attack_delay = 0.05
+
+[node name="Light2D" type="Light2D" parent="."]
+z_index = 60
+texture = ExtResource( 2 )
+texture_scale = 0.5
+range_height = 1.0
+shadow_enabled = true
+shadow_filter = 5
+shadow_filter_smooth = 6.4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, 1 )
 shape = SubResource( 1 )
 
 [node name="Character" type="Sprite" parent="."]
+light_mask = 0
 position = Vector2( 0, -5 )
 z_index = 50
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 vframes = 4
 hframes = 7
 frame = 7
+
+[node name="Darkness" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.835294 )
+self_modulate = Color( 1, 1, 1, 0.596078 )
+z_index = 60
+texture = ExtResource( 4 )
 
 [node name="RotationPoint" type="Node2D" parent="."]
 
@@ -40,7 +59,7 @@ position = Vector2( 16.1925, -0.51405 )
 [node name="WeaponSlot" type="Node2D" parent="RotationPoint"]
 z_index = 51
 
-[node name="Rifle" parent="RotationPoint/WeaponSlot" instance=ExtResource( 3 )]
+[node name="Rifle" parent="RotationPoint/WeaponSlot" instance=ExtResource( 5 )]
 pickedup = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -52,7 +71,7 @@ drag_margin_left = 0.0
 drag_margin_top = 0.0
 drag_margin_right = 0.0
 drag_margin_bottom = 0.0
-script = ExtResource( 4 )
+script = ExtResource( 6 )
 
 [node name="ItemDetection" type="Area2D" parent="."]
 collision_layer = 512

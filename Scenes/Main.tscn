@@ -16,6 +16,7 @@ zoom = Vector2( 10, 10 )
 show_behind_parent = true
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 32, 32 )
+cell_quadrant_size = 4
 collision_layer = 15
 collision_mask = 15
 format = 1

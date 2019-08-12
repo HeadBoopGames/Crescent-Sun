@@ -17,7 +17,12 @@ _global_script_class_icons={
 
 config/name="CrescentSun"
 run/main_scene="res://Scenes/Main.tscn"
+run/low_processor_mode=true
 config/icon="res://icon.png"
+
+[autoload]
+
+GameInstance="*res://Scripts/GameInstance.gd"
 
 [debug]
 
@@ -95,6 +100,10 @@ ui_del={
 
 [physics]
 
-2d/physics_engine="GodotPhysics"
-2d/thread_model=2
+2d/large_object_surface_threshold_in_cells=4096
 2d/default_gravity=0
+
+[rendering]
+
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=1

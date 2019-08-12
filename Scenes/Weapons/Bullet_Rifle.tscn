@@ -1,15 +1,26 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scripts/Bullet_Rifle.gd" type="Script" id=1]
-[ext_resource path="res://Assets/Character.png" type="Texture" id=2]
-[ext_resource path="res://Assets/Sounds/SingleRifleShot.wav" type="AudioStream" id=3]
+[ext_resource path="res://Assets/2DLighting.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Character.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Sounds/SingleRifleShot.wav" type="AudioStream" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 3.05327, 4.71302 )
+extents = Vector2( 1.32367, 3.45748 )
 
 [node name="Bullet_Rifle" type="Area2D"]
 script = ExtResource( 1 )
+CollisionEnabled = true
 speed = 10.0
+
+[node name="Light2D" type="Light2D" parent="."]
+rotation = 1.5708
+texture = ExtResource( 2 )
+texture_scale = 0.3
+color = Color( 1, 0.513726, 0, 1 )
+shadow_enabled = true
+shadow_filter = 5
+shadow_filter_smooth = 27.7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
@@ -19,15 +30,21 @@ shape = SubResource( 1 )
 rotation = 1.5708
 scale = Vector2( 0.5, 0.5 )
 z_index = 99
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 
 [node name="Lifetime" type="Timer" parent="."]
 one_shot = true
 autostart = true
 
 [node name="BulletSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
+stream = ExtResource( 4 )
 volume_db = -6.433
+
+[node name="TileDetectionPoint_01" type="Position2D" parent="."]
+position = Vector2( 4, -1 )
+
+[node name="TileDetectionPoint_02" type="Position2D" parent="."]
+position = Vector2( 4, 1 )
 
 [connection signal="body_entered" from="." to="." method="_on_Bullet_Rifle_body_entered"]
 [connection signal="timeout" from="Lifetime" to="." method="_on_Lifetime_timeout"]

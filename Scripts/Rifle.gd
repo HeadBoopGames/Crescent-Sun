@@ -1,7 +1,7 @@
 extends Sprite
 
 var attack_timer
-export var attack_delay = 0.1
+export var attack_delay = 0.0
 export var pickedup = false
 
 onready var character = get_node("/root/Main/Player")
