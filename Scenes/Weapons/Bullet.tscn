@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Scripts/Bullet_Rifle.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Bullet.gd" type="Script" id=1]
 [ext_resource path="res://Assets/2DLighting.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Character.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Sounds/SingleRifleShot.wav" type="AudioStream" id=4]
@@ -12,6 +12,8 @@ extents = Vector2( 1.32367, 3.45748 )
 script = ExtResource( 1 )
 CollisionEnabled = true
 speed = 10.0
+piercing = true
+exploding = true
 
 [node name="Light2D" type="Light2D" parent="."]
 rotation = 1.5708

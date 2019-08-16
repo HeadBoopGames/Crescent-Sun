@@ -94,7 +94,7 @@ func controls_loop():
 	var DOWN = Input.is_action_pressed("ui_down")
 	var SHOOT = Input.is_action_pressed("fireweapon")
 	
-	var DROP_ITEM = Input.is_action_just_pressed("ui_del")
+	var DROP_ITEM = Input.is_action_just_pressed("drop")
 	var PICKUP_ITEM = Input.is_action_just_pressed("pickup")
 	
 	if DROP_ITEM:
