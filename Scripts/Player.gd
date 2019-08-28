@@ -20,6 +20,8 @@ export var health = 5
 var canPickUp
 var itemToPickUp
 
+var in_room
+
 
 func _ready():
 	timer = Timer.new()
@@ -37,6 +39,8 @@ func _ready():
 	character = get_node("Character")
 	RotationPoint = get_node("RotationPoint")
 	canPickUp = false
+	
+	in_room = true
 	
 
 
@@ -99,7 +103,7 @@ func controls_loop():
 	
 	if DROP_ITEM:
 		if get_node("RotationPoint/WeaponSlot").get_child(0) != null and not canPickUp:
-			var target = get_node("/root/Main/WeaponContainer")
+			var target = get_node("/root/RoomScene/Weapons")
 			var source = get_node("RotationPoint/WeaponSlot").get_child(0)
 			var drop_position = self.position
 			get_node("RotationPoint/WeaponSlot").remove_child(source)
@@ -166,9 +170,12 @@ func animateCharacter():
 
 
 func _on_ItemDetection_area_entered(area):
-	if area.get_parent().tag == "Item":
-		print(area.get_parent().name)
+	if area.get_parent().get("tag") and area.get_parent().tag == "Item":
 		itemToPickUp = area.get_parent()
+	
+#	if area.get_parent().tag == "Item":
+#		print(area.get_parent().name)
+#		itemToPickUp = area.get_parent()
 
 
 func _on_ItemDetection_area_exited(area):

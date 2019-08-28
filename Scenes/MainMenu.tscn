@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/BTN_ProcGen_CharacterBased.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/BTN_ProcGen_RoomBased.gd" type="Script" id=2]
+
+[node name="MainMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="BTN_ProcGen_CharacterBased" type="Button" parent="."]
+margin_left = 302.996
+margin_top = 259.827
+margin_right = 481.996
+margin_bottom = 303.827
+text = "New Game - CB"
+script = ExtResource( 1 )
+
+[node name="BTN_ProcGen_RoomBased" type="Button" parent="."]
+margin_left = 304.625
+margin_top = 331.503
+margin_right = 476.625
+margin_bottom = 377.503
+text = "New Game - RB"
+script = ExtResource( 2 )
+
+[connection signal="pressed" from="BTN_ProcGen_CharacterBased" to="BTN_ProcGen_CharacterBased" method="_on_BTN_ProcGen_CharacterBased_pressed"]
+[connection signal="pressed" from="BTN_ProcGen_RoomBased" to="BTN_ProcGen_RoomBased" method="_on_BTN_ProcGen_RoomBased_pressed"]

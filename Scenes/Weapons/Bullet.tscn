@@ -11,9 +11,8 @@ extents = Vector2( 1.32367, 3.45748 )
 [node name="Bullet_Rifle" type="Area2D"]
 script = ExtResource( 1 )
 CollisionEnabled = true
-speed = 10.0
-piercing = true
-exploding = true
+speed = 20.0
+muted = true
 
 [node name="Light2D" type="Light2D" parent="."]
 rotation = 1.5708

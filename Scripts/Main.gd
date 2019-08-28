@@ -11,11 +11,11 @@ var rifle = preload("res://Scenes/Weapons/Rifle.tscn")
 onready var Map = $TileMap
 
 var tile_size = 32
-var num_rooms = 20
+var num_rooms = 10
 var min_size = 4
-var max_size = 8
-var hspread = 500
-var cull = 0.15
+var max_size = 10
+var hspread = 256
+var cull = 0.25
 
 var path # AStar pathfinding object
 var start_room = null
@@ -23,6 +23,7 @@ var end_room = null
 var play_mode = false
 var player = null
 
+export (bool) var culling
 
 func _ready():
 	randomize()
@@ -38,25 +39,28 @@ func _ready():
 	
 	if not play_mode:
 		player = Player.instance()
-		get_node("Camera2D").current = false
+#		get_node("Camera2D").current = false
 		add_child(player)
 		player.position = start_room.position
 		play_mode = true
-		
+
 
 	# Wait for map
 	yield(get_tree().create_timer(0.3), 'timeout')
-	
+
 	populate_map()
 
 
 func make_rooms():
 	for i in range(num_rooms):
-		var pos = Vector2(rand_range(-hspread, hspread),0)
+		var pos = Vector2(rand_range(-hspread, hspread),rand_range(-hspread, hspread))
 		var r = Room.instance()
 		var w = min_size + randi() % (max_size - min_size)
 		var h = min_size + randi() % (max_size - min_size)
 		r.make_room(pos, Vector2(w, h) * tile_size)
+		r.area_size = Vector2(w, h)
+		r.area_position = pos
+		r.set_area_collision()
 		$Rooms.add_child(r)
 		yield(get_tree().create_timer(0.01), 'timeout')
 	
@@ -66,13 +70,13 @@ func make_rooms():
 	# cull rooms
 	var room_positions = []
 	for room in $Rooms.get_children():
-		if randf() < cull:
+		if randf() < cull and culling:
 			room.queue_free()
 		else:
 			room.mode = RigidBody2D.MODE_STATIC
 			room_positions.append(Vector3(room.position.x, room.position.y, 0))
-			room.set_area_collision()
-	
+			room.disable_collisions()
+
 	yield(get_tree(), 'idle_frame')
 	
 	# Generate a minimum spanning tree connecting the rooms
@@ -91,7 +95,7 @@ func _draw():
 			for c in path.get_point_connections(p):
 				var pp = path.get_point_position(p)
 				var cp = path.get_point_position(c)
-				draw_line(Vector2(pp.x, pp.y), Vector2(cp.x, cp.y), Color(1, 1, 0), 15, true)
+#				draw_line(Vector2(pp.x, pp.y), Vector2(cp.x, cp.y), Color(1, 1, 0), 15, true)
 
 
 func _process(delta):
@@ -100,28 +104,28 @@ func _process(delta):
 	OS.set_window_title(title + " " + version + " | FPS: " + str(Engine.get_frames_per_second()))
 
 
-func _input(event):
-	if event.is_action_pressed('ui_accept'):
-		if play_mode:
-			player.queue_free()
-			play_mode = false
-		for n in $Rooms.get_children():
-			n.queue_free()
-		path = null
-		start_room = null
-		end_room = null
-		make_rooms()
-	
-	if event.is_action_pressed("ui_focus_next"):
-		make_map()
-		
-	if event.is_action_pressed("ui_cancel"):
-		if not play_mode:
-			player = Player.instance()
-			get_node("Camera2D").current = false
-			add_child(player)
-			player.position = start_room.position
-			play_mode = true
+#func _input(event):
+#	if event.is_action_pressed('ui_accept'):
+#		if play_mode:
+#			player.queue_free()
+#			play_mode = false
+#		for n in $Rooms.get_children():
+#			n.queue_free()
+#		path = null
+#		start_room = null
+#		end_room = null
+#		make_rooms()
+#
+#	if event.is_action_pressed("ui_focus_next"):
+#		make_map()
+#
+#	if event.is_action_pressed("ui_cancel"):
+#		if not play_mode:
+#			player = Player.instance()
+#			get_node("Camera2D").current = false
+#			add_child(player)
+#			player.position = start_room.position
+#			play_mode = true
 
 
 func find_mst(nodes):
@@ -167,8 +171,8 @@ func make_map():
 		full_rect = full_rect.merge(r)
 	var topleft = Map.world_to_map(full_rect.position)
 	var bottomright = Map.world_to_map(full_rect.end)
-	for x in range(topleft.x - 8, bottomright.x + 8):
-		for y in range(topleft.y - 8, bottomright.y + 8):
+	for x in range(topleft.x - 5, bottomright.x + 5):
+		for y in range(topleft.y - 5, bottomright.y + 5):
 			Map.set_cell(x, y, 0) # Set all cells to Wall
 	
 	# Carve rooms
@@ -177,8 +181,8 @@ func make_map():
 		var s = (room.size / tile_size).floor()
 		var pos = Map.world_to_map(room.position)
 		var ul = (room.position / tile_size).floor() - s
-		for x in range(0, s.x * 2): #range(0, s.x * 2): # Add this if you want to have separate rooms: range(2, s.x * 2 - 1):
-			for y in range(0, s.y * 2): # Add this if you want to have separate rooms: range(2, s.y * 2 - 1):
+		for x in range(2, s.x * 2 - 1): #range(0, s.x * 2): # Add this if you want to have separate rooms: range(2, s.x * 2 - 1):
+			for y in range(2, s.y * 2 - 1): # Add this if you want to have separate rooms: range(2, s.y * 2 - 1):
 				var floor_tile = 0
 				var tile_ID = range(1,101)[randi()%range(1,101).size()]
 				if tile_ID <= 21:
@@ -235,7 +239,14 @@ func find_end_room():
 
 func populate_map():
 	for room in $Rooms.get_children():
+		if room == start_room:
+			get_node("/root/Main/Camera2D").position = room.position
+			
 		if room != start_room:
 			var Rifle = rifle.instance()
 			Rifle.position = Vector2(room.position.x, room.position.y)
 			get_node("EnemyContainer").add_child(Rifle)
+		
+		if room == end_room:
+			# Spawn a way deeper into the dungeons
+			pass

@@ -10,7 +10,8 @@ export (bool) var piercing
 export (bool) var exploding
 
 func _ready():
-	velocity = (get_global_mouse_position() - get_node("/root/Main/Player").position).normalized()
+#	velocity = (get_global_mouse_position() - get_node("/root/Main/Player").position).normalized()
+	velocity = (get_global_mouse_position() - get_node("/root/RoomScene/Player").position).normalized()
 	rotation = rot
 	HasHit = false
 	if not muted:
