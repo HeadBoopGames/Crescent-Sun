@@ -7,7 +7,6 @@ script = ExtResource( 1 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
-zoom = Vector2( 3, 3 )
 limit_smoothed = true
 smoothing_enabled = true
 drag_margin_left = 0.0
@@ -34,7 +33,7 @@ position = Vector2( 1166.28, -0.393051 )
 current = true
 zoom = Vector2( 5, 5 )
 
-[node name="Weapons" type="Node2D" parent="."]
+[node name="WeaponsContainer" type="Node2D" parent="."]
 
 [node name="BulletsContainer" type="Node2D" parent="."]
 

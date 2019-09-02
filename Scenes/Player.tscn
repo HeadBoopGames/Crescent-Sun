@@ -1,16 +1,45 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
 [ext_resource path="res://Assets/2DLighting.png" type="Texture" id=2]
-[ext_resource path="res://Assets/CharacterAnimAtlas.tres" type="Texture" id=3]
-[ext_resource path="res://Assets/Black.png" type="Texture" id=4]
-[ext_resource path="res://Scenes/Weapons/Rifle.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=6]
+[ext_resource path="res://Assets/Noise_01.jpg" type="Texture" id=3]
+[ext_resource path="res://Assets/CharacterAnimAtlas.tres" type="Texture" id=4]
+[ext_resource path="res://Assets/Black.png" type="Texture" id=5]
+[ext_resource path="res://Scenes/Weapons/Rifle.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 4.95071, 4.53362 )
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="Shader" id=2]
+code = "shader_type canvas_item;
+
+uniform bool apply = true;
+uniform float amount_x = 1.0;
+uniform float amount_y = 1.0;
+uniform sampler2D offset_texture : hint_white;
+
+void fragment() {
+	vec4 texture_color = texture(TEXTURE, UV);
+	vec4 color = texture_color;
+	if (apply == true) {
+		float adjusted_y_amount = amount_y * texture(offset_texture, UV).r / 100.0;
+		float adjusted_x_amount = amount_x * texture(offset_texture, UV).b / 100.0;
+		color.r = texture(TEXTURE, vec2(UV.x + adjusted_x_amount, UV.y + adjusted_y_amount)).r;
+		color.g = texture(TEXTURE, UV).g;
+		color.b = texture(TEXTURE, vec2(UV.x - adjusted_x_amount, UV.y - adjusted_y_amount)).b;
+	}
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/apply = false
+shader_param/amount_x = 3.0
+shader_param/amount_y = 3.0
+shader_param/offset_texture = ExtResource( 3 )
+
+[sub_resource type="RectangleShape2D" id=4]
 
 [node name="Player" type="KinematicBody2D"]
 scale = Vector2( 2.5, 2.5 )
@@ -20,6 +49,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+shake_amount = 5.0
 attack_delay = 0.05
 SPEED = 300
 
@@ -38,9 +68,10 @@ shape = SubResource( 1 )
 
 [node name="Character" type="Sprite" parent="."]
 light_mask = 0
+material = SubResource( 3 )
 position = Vector2( 0, -5 )
 z_index = 50
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 vframes = 4
 hframes = 7
 frame = 7
@@ -51,7 +82,7 @@ modulate = Color( 1, 1, 1, 0.835294 )
 self_modulate = Color( 1, 1, 1, 0.596078 )
 scale = Vector2( 2, 2 )
 z_index = 60
-texture = ExtResource( 4 )
+texture = ExtResource( 5 )
 
 [node name="RotationPoint" type="Node2D" parent="."]
 
@@ -63,19 +94,19 @@ position = Vector2( 16.1925, -0.51405 )
 [node name="WeaponSlot" type="Node2D" parent="RotationPoint"]
 z_index = 51
 
-[node name="Rifle" parent="RotationPoint/WeaponSlot" instance=ExtResource( 5 )]
+[node name="Rifle" parent="RotationPoint/WeaponSlot" instance=ExtResource( 6 )]
 pickedup = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 0, -5 )
-zoom = Vector2( 0.5, 0.5 )
+current = true
 limit_smoothed = true
 smoothing_enabled = true
 drag_margin_left = 0.0
 drag_margin_top = 0.0
 drag_margin_right = 0.0
 drag_margin_bottom = 0.0
-script = ExtResource( 6 )
+script = ExtResource( 7 )
 shake_amount = 5.0
 shake_time = 0.2
 
@@ -84,7 +115,11 @@ collision_layer = 524800
 collision_mask = 524800
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ItemDetection"]
-shape = SubResource( 2 )
+shape = SubResource( 4 )
+
+[node name="Timer_HitFX" type="Timer" parent="."]
+wait_time = 0.5
 
 [connection signal="area_entered" from="ItemDetection" to="." method="_on_ItemDetection_area_entered"]
 [connection signal="area_exited" from="ItemDetection" to="." method="_on_ItemDetection_area_exited"]
+[connection signal="timeout" from="Timer_HitFX" to="." method="_on_Timer_HitFX_timeout"]

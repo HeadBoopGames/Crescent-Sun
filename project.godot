@@ -109,3 +109,4 @@ drop={
 
 quality/intended_usage/framebuffer_allocation=0
 quality/intended_usage/framebuffer_allocation.mobile=1
+environment/default_clear_color=Color( 0, 0, 0, 1 )

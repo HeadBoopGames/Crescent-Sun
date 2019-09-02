@@ -4,6 +4,13 @@ var timer
 var character
 var anim_walk
 var anim_attack
+var been_hit
+
+export var shake_amount = 1.0
+
+var Mat
+var hitfx_x_value = 0.0
+var hitfx_y_value = 0.0
 
 var attack_timer = null
 export var attack_delay = 0.5
@@ -24,6 +31,12 @@ var in_room
 
 
 func _ready():
+	if get_node("/root/").has_node("Main"):
+		$Camera2D.current = true
+	
+	if get_node("/root/").has_node("RoomScene"):
+		$Camera2D.current = false
+	
 	timer = Timer.new()
 	timer.connect("timeout", self, "animateCharacter")
 	add_child(timer)
@@ -42,6 +55,9 @@ func _ready():
 	
 	in_room = true
 	
+	been_hit = false
+	
+	Mat = $Character.get_material()
 
 
 func _input(event):
@@ -55,7 +71,6 @@ func _input(event):
 		# if so, pick up current game and move current weapon to weaponcontainer
 		if canPickUp:
 			print("Boop!")
-		
 
 
 func _physics_process(delta):
@@ -89,6 +104,19 @@ func _physics_process(delta):
 
 func _process(delta):
 	RotationPoint.look_at(get_global_mouse_position())
+	
+	if been_hit:
+		randomize()
+		hitfx_x_value = rand_range(-3, 3)
+		$Character.material.set_shader_param("amount_x", hitfx_x_value)
+		
+		randomize()
+		hitfx_y_value = rand_range(-3, 3)
+		$Character.material.set_shader_param("amount_y", hitfx_y_value)
+		
+		get_node("/root/RoomScene/Camera2D").set_offset(Vector2(rand_range(-1.0, 1.0) * shake_amount, rand_range(-1.0, 1.0) * shake_amount))
+		
+		
 
 
 func controls_loop():
@@ -103,7 +131,13 @@ func controls_loop():
 	
 	if DROP_ITEM:
 		if get_node("RotationPoint/WeaponSlot").get_child(0) != null and not canPickUp:
-			var target = get_node("/root/RoomScene/Weapons")
+			var target
+			if get_node("/root/").has_node("Main"):
+				target = get_node("/root/Main/WeaponsContainer")
+				
+			if get_node("/root/").has_node("RoomScene"):
+				target = get_node("/root/RoomScene/WeaponsContainer")
+				
 			var source = get_node("RotationPoint/WeaponSlot").get_child(0)
 			var drop_position = self.position
 			get_node("RotationPoint/WeaponSlot").remove_child(source)
@@ -181,3 +215,14 @@ func _on_ItemDetection_area_entered(area):
 func _on_ItemDetection_area_exited(area):
 	if itemToPickUp != null:
 		itemToPickUp = null
+
+
+func takeDamage(amount):
+	been_hit = true
+	$Character.material.set_shader_param("apply", true)
+	$Timer_HitFX.start()
+
+
+func _on_Timer_HitFX_timeout():
+	$Character.material.set_shader_param("apply", false)
+	been_hit = false

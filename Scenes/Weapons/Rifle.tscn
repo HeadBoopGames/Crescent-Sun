@@ -13,6 +13,7 @@ texture = ExtResource( 1 )
 offset = Vector2( 40, 0 )
 script = ExtResource( 2 )
 attack_delay = 0.1
+silenced = true
 
 [node name="BulletSpawnPoint" type="Node2D" parent="."]
 position = Vector2( 109.063, -5.06138 )

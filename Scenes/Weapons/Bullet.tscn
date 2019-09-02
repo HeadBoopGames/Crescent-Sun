@@ -13,6 +13,7 @@ script = ExtResource( 1 )
 CollisionEnabled = true
 speed = 20.0
 muted = true
+exploding = true
 
 [node name="Light2D" type="Light2D" parent="."]
 rotation = 1.5708

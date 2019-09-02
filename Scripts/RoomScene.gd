@@ -53,7 +53,7 @@ func _ready():
 		if r.roomID != 0 and r.roomID != $Rooms.get_child_count() - 1:
 			var Rifle = rifle.instance()
 			Rifle.position = Vector2(r.position.x + 640, r.position.y + 368)
-			get_node("Weapons").add_child(Rifle)
+			get_node("WeaponsContainer").add_child(Rifle)
 	
 		if r.roomID == $Rooms.get_child_count() - 1:
 			# Spawn a way deeper into the dungeons
