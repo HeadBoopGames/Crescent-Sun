@@ -16,8 +16,9 @@ var can_shoot = true
 
 var character
 
-var item_name = "Rifle"
+var item_type = "Rifle"
 var tag = "Item"
+var ammo_to_use = "Bullet"
 
 func _ready():
 	if get_node("/root/").has_node("Main"):
@@ -45,7 +46,8 @@ func Shoot():
 		attack_timer.start()
 		character.get_node("Camera2D").camerashake()
 		if silenced:
-			print("Bang!")
+			pass
+#			print("Bang!")
 		else:
 			$ShotSound.play(0.0)
 

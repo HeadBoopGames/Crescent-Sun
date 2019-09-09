@@ -1,0 +1,17 @@
+[gd_scene format=2]
+
+[node name="ViewportContainer" type="ViewportContainer"]
+margin_right = 1282.0
+margin_bottom = 738.0
+stretch = true
+
+[node name="Control" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Label" type="Label" parent="Control"]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "Boop"
+uppercase = true
+

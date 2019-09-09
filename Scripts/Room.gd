@@ -3,6 +3,7 @@ extends RigidBody2D
 var size
 var area_position
 var area_size
+var tag = "FillRoom"
 
 func make_room(_pos, _size):
 	position = _pos
@@ -25,7 +26,7 @@ func set_area_collision():
 #	$CollisionShape2D.disabled = true
 
 func disable_collisions():
-#	$Area2D/CollisionShape2D.disabled = true
+	$Area2D/CollisionShape2D.disabled = true
 	$CollisionShape2D.disabled = true
 
 

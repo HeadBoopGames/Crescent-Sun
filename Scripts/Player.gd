@@ -14,7 +14,7 @@ var hitfx_y_value = 0.0
 
 var attack_timer = null
 export var attack_delay = 0.5
-var can_shoot = true
+var can_shoot
 
 export var SPEED = 150
 var movedir = Vector2(0,0)
@@ -28,6 +28,13 @@ var canPickUp
 var itemToPickUp
 
 var in_room
+
+var ammo_bullets
+var ammo_shells
+var ammo_energy
+var ammo_explosion
+
+var interact_with
 
 
 func _ready():
@@ -57,8 +64,21 @@ func _ready():
 	
 	been_hit = false
 	
+#	ammo_bullets = 20
+#	ammo_energy = 20
+#	ammo_explosion = 20
+#	ammo_shells = 20
+#	updateAmmo()
+	
 	Mat = $Character.get_material()
+	
 
+#func updateAmmo():
+#	pass
+#	$Camera2D/CanvasLayer/LBL_Bullet/LBL_Amount.text = str(ammo_bullets)
+#	$Camera2D/CanvasLayer/LBL_Energy/LBL_Amount.text = str(ammo_energy)
+#	$Camera2D/CanvasLayer/LBL_Explosive/LBL_Amount.text = str(ammo_explosion)
+#	$Camera2D/CanvasLayer/LBL_Shell/LBL_Amount.text = str(ammo_shells)
 
 func _input(event):
 	if event.is_action_pressed('scroll_up'):
@@ -115,8 +135,6 @@ func _process(delta):
 		$Character.material.set_shader_param("amount_y", hitfx_y_value)
 		
 		get_node("/root/RoomScene/Camera2D").set_offset(Vector2(rand_range(-1.0, 1.0) * shake_amount, rand_range(-1.0, 1.0) * shake_amount))
-		
-		
 
 
 func controls_loop():
@@ -128,6 +146,8 @@ func controls_loop():
 	
 	var DROP_ITEM = Input.is_action_just_pressed("drop")
 	var PICKUP_ITEM = Input.is_action_just_pressed("pickup")
+	
+	var INTERACT = Input.is_action_just_pressed("interact")
 	
 	if DROP_ITEM:
 		if get_node("RotationPoint/WeaponSlot").get_child(0) != null and not canPickUp:
@@ -144,10 +164,11 @@ func controls_loop():
 			target.add_child(source)
 			source.set_owner(target)
 			source.position = drop_position
-			source.set_name(source.item_name)
+			source.set_name(source.item_type)
 			canPickUp = true
 		
 	if PICKUP_ITEM:
+#		print(itemToPickUp)
 		if itemToPickUp != null and canPickUp:
 			var target = get_node("RotationPoint/WeaponSlot")
 			var source = itemToPickUp
@@ -155,8 +176,13 @@ func controls_loop():
 			target.add_child(source)
 			source.set_owner(target)
 			source.position = Vector2(0,0)
-			source.set_name(source.item_name)
+			source.set_name(source.item_type)
 			canPickUp = false
+	
+	if INTERACT and interact_with != null:
+		match interact_with.tag:
+			"EXIT":
+				interact_with.exit()
 
 	movedir.x = -int(LEFT) + int(RIGHT)
 	movedir.y = -int(UP) + int(DOWN)
@@ -183,7 +209,30 @@ func movement_loop():
 
 func shoot():
 	if get_node("RotationPoint/WeaponSlot").get_child(0) != null and get_node("RotationPoint/WeaponSlot").get_child(0).has_method("Shoot"):
-		get_node("RotationPoint/WeaponSlot").get_child(0).Shoot()
+		match get_node("RotationPoint/WeaponSlot").get_child(0).ammo_to_use:
+			"Bullet":
+				if GameInstance.ammo_bullets > 0 and get_node("RotationPoint/WeaponSlot").get_child(0).can_shoot:
+					GameInstance.ammo_bullets -= 1
+					print(GameInstance.ammo_bullets)
+					get_node("RotationPoint/WeaponSlot").get_child(0).Shoot()
+			
+			"Explosive":
+				if GameInstance.ammo_explosion > 0 and get_node("RotationPoint/WeaponSlot").get_child(0).can_shoot:
+					GameInstance.ammo_explosion -= 1
+					print(GameInstance.ammo_explosion)
+					get_node("RotationPoint/WeaponSlot").get_child(0).Shoot()
+			
+			"Energy":
+				if GameInstance.ammo_energy > 0 and get_node("RotationPoint/WeaponSlot").get_child(0).can_shoot:
+					GameInstance.ammo_energy -= 1
+					print(GameInstance.ammo_energy)
+					get_node("RotationPoint/WeaponSlot").get_child(0).Shoot()
+			
+			"Shell":
+				if GameInstance.ammo_shells > 0 and get_node("RotationPoint/WeaponSlot").get_child(0).can_shoot:
+					GameInstance.ammo_shells -= 1
+					print(GameInstance.ammo_shells)
+					get_node("RotationPoint/WeaponSlot").get_child(0).Shoot()
 
 
 func animateCharacter():
@@ -206,6 +255,24 @@ func animateCharacter():
 func _on_ItemDetection_area_entered(area):
 	if area.get_parent().get("tag") and area.get_parent().tag == "Item":
 		itemToPickUp = area.get_parent()
+		
+	if area.get_parent().get("tag") and area.get_parent().tag == "Ammo":
+		match area.get_parent().type:
+			"Bullet":
+				GameInstance.ammo_bullets += area.get_parent().amount
+				area.get_parent().queue_free()
+			
+			"Explosive":
+				GameInstance.ammo_explosion += area.get_parent().amount
+				area.get_parent().queue_free()
+			
+			"Energy":
+				GameInstance.ammo_energy += area.get_parent().amount
+				area.get_parent().queue_free()
+			
+			"Shell":
+				GameInstance.ammo_shells += area.get_parent().amount
+				area.get_parent().queue_free()
 	
 #	if area.get_parent().tag == "Item":
 #		print(area.get_parent().name)

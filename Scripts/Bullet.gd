@@ -32,7 +32,7 @@ func _on_Bullet_Rifle_body_entered(body):
 	
 	if exploding and get_node("/root/").has_node("Main"):
 		if body.name == "TileMap":
-			print(body.get_used_rect().position.x)
+#			print(body.get_used_rect().position.x)
 			var col_pos_01 = $TileDetectionPoint_01.get_global_transform().get_origin()
 			var col_pos_02 = $TileDetectionPoint_02.get_global_transform().get_origin()
 			var cell_pos_01 = body.world_to_map(col_pos_01)

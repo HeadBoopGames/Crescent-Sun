@@ -7,6 +7,8 @@ var Room = preload("res://Scenes/Room.tscn")
 var Player = preload("res://Scenes/Player.tscn")
 var placeholder = preload("res://Scenes/Placeholder.tscn")
 var rifle = preload("res://Scenes/Weapons/Rifle.tscn")
+var ammo = preload("res://Scenes/Items/Ammo.tscn")
+var exit_col = preload("res://Scenes/Exit.tscn")
 
 onready var Map = $TileMap
 
@@ -14,12 +16,13 @@ var tile_size = 32
 var num_rooms = 10
 var min_size = 4
 var max_size = 10
-var hspread = 256
+var hspread = 500
 var cull = 0.25
 
 var path # AStar pathfinding object
 var start_room = null
 var end_room = null
+var all_rooms = null
 var play_mode = false
 var player = null
 
@@ -47,6 +50,10 @@ func _ready():
 
 	# Wait for map
 	yield(get_tree().create_timer(0.3), 'timeout')
+	
+	all_rooms = $Rooms.get_children()
+	all_rooms[0].tag = "StartRoom"
+	all_rooms[all_rooms.size() - 1].tag = "EndRoom"
 
 	populate_map()
 
@@ -239,14 +246,37 @@ func find_end_room():
 
 func populate_map():
 	for room in $Rooms.get_children():
-		if room == start_room:
-			get_node("/root/Main/Camera2D").position = room.position
+		match room.tag:
+			"StartRoom":
+#				get_node("/root/Main/Camera2D").position = room.position
+				print("Start Room")
 			
-		if room != start_room:
-			var Rifle = rifle.instance()
-			Rifle.position = Vector2(room.position.x, room.position.y)
-			get_node("EnemyContainer").add_child(Rifle)
-		
-		if room == end_room:
-			# Spawn a way deeper into the dungeons
-			pass
+			"FillRoom":
+				var Ammo = ammo.instance()
+				Ammo.position = room.position
+				$AmmoContainer.add_child(Ammo)
+			
+			"EndRoom":
+				# Spawn a way deeper into the dungeons
+				print(room.position)
+				var exit_pos = $TileMap.world_to_map(room.position)
+				$TileMap.set_cellv(exit_pos, 16)
+				var exit = exit_col.instance()
+				exit.position = $TileMap.map_to_world(exit_pos, false)
+				get_node("/root/Main").add_child(exit)
+			
+			
+#		if room == start_room:
+#			get_node("/root/Main/Camera2D").position = room.position
+#			print("Camera position set!")
+#
+#		if room != start_room and room != end_room:
+#			var Ammo = ammo.instance()
+#			Ammo.position = Vector2(room.position.x, room.position.y)
+#			get_node("EnemyContainer").add_child(Ammo)
+#			print("Ammo is placed!")
+#
+#		if room == end_room:
+#			# Spawn a way deeper into the dungeons
+#			print("Working!")
+#			print(room.position)

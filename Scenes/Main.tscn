@@ -27,5 +27,7 @@ format = 1
 
 [node name="WeaponsContainer" type="Node2D" parent="."]
 
+[node name="AmmoContainer" type="Node2D" parent="."]
+
 [node name="BulletsContainer" type="Node2D" parent="."]
 
