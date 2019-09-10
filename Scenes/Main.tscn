@@ -14,7 +14,9 @@ drag_margin_h_enabled = false
 drag_margin_v_enabled = false
 smoothing_enabled = true
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="Nav2D" type="Navigation2D" parent="."]
+
+[node name="TileMap" type="TileMap" parent="Nav2D"]
 show_behind_parent = true
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 32, 32 )

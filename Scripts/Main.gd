@@ -9,8 +9,9 @@ var placeholder = preload("res://Scenes/Placeholder.tscn")
 var rifle = preload("res://Scenes/Weapons/Rifle.tscn")
 var ammo = preload("res://Scenes/Items/Ammo.tscn")
 var exit_col = preload("res://Scenes/Exit.tscn")
+var BaseEnemy = preload("res://Scenes/BaseEnemy.tscn")
 
-onready var Map = $TileMap
+onready var Map = $Nav2D/TileMap # $TileMap
 
 var tile_size = 32
 var num_rooms = 10
@@ -255,14 +256,18 @@ func populate_map():
 				var Ammo = ammo.instance()
 				Ammo.position = room.position
 				$AmmoContainer.add_child(Ammo)
+				
+				var enemy = BaseEnemy.instance()
+				enemy.position = room.position
+				$EnemyContainer.add_child(enemy)
 			
 			"EndRoom":
 				# Spawn a way deeper into the dungeons
 				print(room.position)
-				var exit_pos = $TileMap.world_to_map(room.position)
-				$TileMap.set_cellv(exit_pos, 16)
+				var exit_pos = Map.world_to_map(room.position)
+				Map.set_cellv(exit_pos, 16)
 				var exit = exit_col.instance()
-				exit.position = $TileMap.map_to_world(exit_pos, false)
+				exit.position = Map.map_to_world(exit_pos, false)
 				get_node("/root/Main").add_child(exit)
 			
 			

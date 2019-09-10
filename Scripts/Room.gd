@@ -26,26 +26,29 @@ func set_area_collision():
 #	$CollisionShape2D.disabled = true
 
 func disable_collisions():
-	$Area2D/CollisionShape2D.disabled = true
+	$Area2D/CollisionShape2D.disabled = false
 	$CollisionShape2D.disabled = true
 
 
 func _on_Area2D_body_entered(body):
 	if body.name == "Player":
+		pass
+		
 #		body.get_node("Camera2D").current = false
 #		body.get_node("Camera2D").overlapping_room = true
 #		body.get_node("Camera2D").position = self.position
 #		get_node("/root/Main/Camera2D").overlapping_room = true
-		get_node("/root/Main/Camera2D").position = self.position
+#		get_node("/root/Main/Camera2D").position = self.position
 #		body.in_room = true
 #		get_node("/root/Main/Camera2D").current = true
-		print(size)
+#		print(size)
 
 
 
 func _on_Area2D_body_exited(body):
 	if body.name == "Player":
 		pass
+		
 #		body.in_room = false
 #		body.get_node("Camera2D").overlapping_room = false
 #		get_node("/root/Main/Camera2D").overlapping_room = false

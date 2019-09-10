@@ -42,7 +42,6 @@ shader_param/offset_texture = ExtResource( 3 )
 [sub_resource type="RectangleShape2D" id=4]
 
 [node name="Player" type="KinematicBody2D"]
-scale = Vector2( 2.5, 2.5 )
 collision_layer = 549
 collision_mask = 517
 script = ExtResource( 1 )
