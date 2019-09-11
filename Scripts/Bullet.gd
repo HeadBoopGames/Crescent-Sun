@@ -29,6 +29,8 @@ func _on_Lifetime_timeout():
 
 func _on_Bullet_Rifle_body_entered(body):
 #	get_node("/root/Main/Player/Camera2D").camerashake()
+	if body.get("tag") and body.tag == "Enemy":
+		body.take_damage(2)
 	
 	if exploding and get_node("/root/").has_node("Main"):
 		if body.name == "TileMap":

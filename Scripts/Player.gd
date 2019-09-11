@@ -22,7 +22,7 @@ var RotationPoint
 var characterFacing = "Right"
 var weaponPosition = "Front"
 
-export var health = 5
+export var health = 20
 
 var canPickUp
 var itemToPickUp
@@ -64,21 +64,13 @@ func _ready():
 	
 	been_hit = false
 	
-#	ammo_bullets = 20
-#	ammo_energy = 20
-#	ammo_explosion = 20
-#	ammo_shells = 20
-#	updateAmmo()
+	health = GameInstance.player_health
+	updateUI()
 	
 	Mat = $Character.get_material()
 	
-
-#func updateAmmo():
-#	pass
-#	$Camera2D/CanvasLayer/LBL_Bullet/LBL_Amount.text = str(ammo_bullets)
-#	$Camera2D/CanvasLayer/LBL_Energy/LBL_Amount.text = str(ammo_energy)
-#	$Camera2D/CanvasLayer/LBL_Explosive/LBL_Amount.text = str(ammo_explosion)
-#	$Camera2D/CanvasLayer/LBL_Shell/LBL_Amount.text = str(ammo_shells)
+func updateUI():
+	get_node("/root/Main/UI/UIContainer").updateUI()
 
 func _input(event):
 	if event.is_action_pressed('scroll_up'):
@@ -134,7 +126,12 @@ func _process(delta):
 		hitfx_y_value = rand_range(-3, 3)
 		$Character.material.set_shader_param("amount_y", hitfx_y_value)
 		
-		get_node("/root/RoomScene/Camera2D").set_offset(Vector2(rand_range(-1.0, 1.0) * shake_amount, rand_range(-1.0, 1.0) * shake_amount))
+		if get_node("/root/").has_node("RoomScene"):
+			get_node("/root/RoomScene/Camera2D").set_offset(Vector2(rand_range(-1.0, 1.0) * shake_amount, rand_range(-1.0, 1.0) * shake_amount))
+		
+		
+		if get_node("/root/").has_node("Main"):
+			$Camera2D.set_offset(Vector2(rand_range(-1.0, 1.0) * shake_amount, rand_range(-1.0, 1.0) * shake_amount))
 
 
 func controls_loop():
@@ -208,6 +205,7 @@ func movement_loop():
 
 
 func shoot():
+	updateUI()
 	if get_node("RotationPoint/WeaponSlot").get_child(0) != null and get_node("RotationPoint/WeaponSlot").get_child(0).has_method("Shoot"):
 		match get_node("RotationPoint/WeaponSlot").get_child(0).ammo_to_use:
 			"Bullet":
@@ -257,6 +255,7 @@ func _on_ItemDetection_area_entered(area):
 		itemToPickUp = area.get_parent()
 		
 	if area.get_parent().get("tag") and area.get_parent().tag == "Ammo":
+		print(area.get_parent().type)
 		match area.get_parent().type:
 			"Bullet":
 				GameInstance.ammo_bullets += area.get_parent().amount
@@ -273,6 +272,8 @@ func _on_ItemDetection_area_entered(area):
 			"Shell":
 				GameInstance.ammo_shells += area.get_parent().amount
 				area.get_parent().queue_free()
+				
+		updateUI()
 	
 #	if area.get_parent().tag == "Item":
 #		print(area.get_parent().name)
@@ -284,12 +285,25 @@ func _on_ItemDetection_area_exited(area):
 		itemToPickUp = null
 
 
-func takeDamage(amount):
-	been_hit = true
-	$Character.material.set_shader_param("apply", true)
-	$Timer_HitFX.start()
+#func takeDamage(amount):
+#	been_hit = true
+#	$Character.material.set_shader_param("apply", true)
+#	$Timer_HitFX.start()
 
 
 func _on_Timer_HitFX_timeout():
 	$Character.material.set_shader_param("apply", false)
 	been_hit = false
+
+
+func take_damage(damage):
+	GameInstance.player_health -= damage
+	updateUI()
+	
+	been_hit = true
+	$Character.material.set_shader_param("apply", true)
+	$Timer_HitFX.start()
+	
+	if GameInstance.player_health <= 0:
+		print("I'm dead!")
+		get_tree().paused = true

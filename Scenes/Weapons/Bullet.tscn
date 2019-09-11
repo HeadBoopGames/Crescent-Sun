@@ -9,6 +9,7 @@
 extents = Vector2( 1.32367, 3.45748 )
 
 [node name="Bullet_Rifle" type="Area2D"]
+collision_layer = 5
 script = ExtResource( 1 )
 CollisionEnabled = true
 speed = 20.0

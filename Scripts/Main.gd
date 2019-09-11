@@ -41,12 +41,7 @@ func _ready():
 	# Wait for map
 	yield(get_tree().create_timer(1), 'timeout')
 	
-	if not play_mode:
-		player = Player.instance()
-#		get_node("Camera2D").current = false
-		add_child(player)
-		player.position = start_room.position
-		play_mode = true
+	
 
 
 	# Wait for map
@@ -55,6 +50,13 @@ func _ready():
 	all_rooms = $Rooms.get_children()
 	all_rooms[0].tag = "StartRoom"
 	all_rooms[all_rooms.size() - 1].tag = "EndRoom"
+	
+	if not play_mode:
+		player = Player.instance()
+#		get_node("Camera2D").current = false
+		add_child(player)
+		player.position = all_rooms[0].position
+		play_mode = true
 
 	populate_map()
 
@@ -246,13 +248,14 @@ func find_end_room():
 
 
 func populate_map():
-	for room in $Rooms.get_children():
+	for room in all_rooms: # $Rooms.get_children():
 		match room.tag:
 			"StartRoom":
 #				get_node("/root/Main/Camera2D").position = room.position
-				print("Start Room")
+#				print("Start Room")
+				pass
 			
-			"FillRoom":
+			"Room":
 				var Ammo = ammo.instance()
 				Ammo.position = room.position
 				$AmmoContainer.add_child(Ammo)

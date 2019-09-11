@@ -3,7 +3,7 @@ extends RigidBody2D
 var size
 var area_position
 var area_size
-var tag = "FillRoom"
+var tag = "Room"
 
 func make_room(_pos, _size):
 	position = _pos

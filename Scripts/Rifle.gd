@@ -50,6 +50,7 @@ func Shoot():
 #			print("Bang!")
 		else:
 			$ShotSound.play(0.0)
+			
 
 func on_attacktimeout_complete():
 	can_shoot = true

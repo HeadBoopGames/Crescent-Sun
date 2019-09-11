@@ -16,10 +16,6 @@ func _ready():
 	add_child(shake_timer)
 	overlapping_room = false
 	character = get_node("/root/Main/Player")
-	
-	UI = load("res://UI.tscn").instance()
-#	get_node("/root/").add_child(UI)
-	self.add_child(UI)
 
 func _process(delta):
 	if not overlapping_room:

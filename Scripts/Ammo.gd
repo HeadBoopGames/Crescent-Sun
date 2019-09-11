@@ -1,6 +1,6 @@
 extends Sprite
 
-export var tag = "Ammo"
+var tag = "Ammo"
 export var type = ""
 export var amount = 20
 
